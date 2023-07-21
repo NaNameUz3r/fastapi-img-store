@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+minio
+python-multipart
+environs
+pytest
+pytest-asyncio
+httpx
+requests
