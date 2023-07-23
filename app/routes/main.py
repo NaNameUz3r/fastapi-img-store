@@ -21,7 +21,7 @@ router = APIRouter()
 async def upload_file(file: t.Optional[UploadFile] = File(None)) -> JSONResponse:
     if file is not None:
         try:
-            image_id = minio.put_object(file)
+            image_id = await minio.put_object(file)
             return JSONResponse(content=serializers.UploadResponse(
                 ID=image_id,
                 message='Image Uploaded OK').model_dump(),
@@ -44,7 +44,7 @@ async def upload_file(file: t.Optional[UploadFile] = File(None)) -> JSONResponse
 @router.get("/images/{image_id}")
 async def download(image_id: str):
     try:
-        image_data = minio.get_object(image_id)
+        image_data = await minio.get_object(image_id)
         return StreamingResponse(io.BytesIO(image_data), media_type="image/jpg")
     except:
         return JSONResponse(status_code=404, content={"message": "Image not found"})
@@ -53,6 +53,6 @@ async def download(image_id: str):
 @router.delete("/images/{image_id}")
 async def delete(image_id: str):
     try:
-        minio.remove_object(image_id)
+        await minio.remove_object(image_id)
     except:
         return JSONResponse(status_code=404, content={"message": "Image not found"})
