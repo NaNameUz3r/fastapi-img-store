@@ -1,6 +1,6 @@
 import os
 import uuid
-from fastapi import UploadFile, Depends, HTTPException, status
+from fastapi import UploadFile
 from fastapi.responses import StreamingResponse
 from minio import Minio
 from app.config import MINIO_KEY, MINIO_URL, MINIO_SECRET, BUCKET_NAME
@@ -27,7 +27,7 @@ class MinioService:
             secure=False
         )
 
-    def put_object(self, file: UploadFile) -> str:
+    async def put_object(self, file: UploadFile) -> str:
         bucket_name = self.bucket_name
 
         if not self.minio_client.bucket_exists(bucket_name):
@@ -47,13 +47,13 @@ class MinioService:
 
         return file_id
 
-    def remove_object(self, file_name: str ) -> None:
+    async def remove_object(self, file_name: str) -> None:
         self.minio_client.remove_object(
             bucket_name=self.bucket_name,
             object_name=file_name + ".jpg",
         )
 
-    def get_object(self, file_name: str) -> StreamingResponse:
+    async def get_object(self, file_name: str) -> StreamingResponse:
 
         response = self.minio_client.get_object(bucket_name=self.bucket_name,
                                                 object_name=file_name + ".jpg")
