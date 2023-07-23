@@ -11,7 +11,9 @@ def client():
 
 @patch("app.routes.main.minio")
 def test_upload_file(mock_minio, client: TestClient) -> None:
-    mock_minio.put_object.return_value = 'custom_image_id'
+    async def mocked_minio():
+        return 'custrom_image_id'
+    mock_minio.put_object.return_value = mocked_minio()
 
     test_file = 'tests/test.jpg'
     with open(test_file, 'rb') as f:
