@@ -3,8 +3,6 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch
 from app.main import app
 
-test_file = 'tests/test.jpg'
-
 
 @pytest.fixture()
 def client():
@@ -15,6 +13,7 @@ def client():
 def test_upload_file(mock_minio, client: TestClient) -> None:
     mock_minio.put_object.return_value = 'custom_image_id'
 
+    test_file = 'tests/test.jpg'
     with open(test_file, 'rb') as f:
         files = {"file": ('test.jpeg', f, 'multipart/form-data')}
         response = client.post('/images/', files=files)
@@ -31,6 +30,7 @@ def test_upload_no_file(client: TestClient) -> None:
     assert response.json() == {"detail": "No file provided"}
 
 
+# still irrelevant — minio always return 200 on deletes
 # def test_delete_file():
 #     response = client.delete(f"/images/qwerty_lol_no_such_file")
 #     assert response.status_code == 404
