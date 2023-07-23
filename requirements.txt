@@ -8,3 +8,4 @@ pytest-asyncio
 httpx
 requests
 tricky
+miniopy_async

@@ -44,7 +44,7 @@ async def upload_file(file: t.Optional[UploadFile] = File(None)) -> JSONResponse
 @router.get("/images/{image_id}")
 async def download(image_id: str):
     try:
-        image_data = await minio.get_object(image_id)
+        image_data = minio.get_object(image_id)
         return StreamingResponse(io.BytesIO(image_data), media_type="image/jpg")
     except:
         return JSONResponse(status_code=404, content={"message": "Image not found"})
@@ -53,6 +53,6 @@ async def download(image_id: str):
 @router.delete("/images/{image_id}")
 async def delete(image_id: str):
     try:
-        await minio.remove_object(image_id)
+        minio.remove_object(image_id)
     except:
         return JSONResponse(status_code=404, content={"message": "Image not found"})

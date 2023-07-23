@@ -2,7 +2,7 @@ import os
 import uuid
 from fastapi import UploadFile
 from fastapi.responses import StreamingResponse
-from minio import Minio
+from miniopy_async import Minio
 from app.config import MINIO_KEY, MINIO_URL, MINIO_SECRET, BUCKET_NAME
 
 
@@ -37,7 +37,7 @@ class MinioService:
         file_name = file_id + ".jpg"
 
         with file.file as file_data:
-            self.minio_client.put_object(
+            await self.minio_client.put_object(
                 bucket_name=bucket_name,
                 object_name=file_name,
                 data=file_data,
@@ -48,14 +48,14 @@ class MinioService:
         return file_id
 
     async def remove_object(self, file_name: str) -> None:
-        self.minio_client.remove_object(
+        await self.minio_client.remove_object(
             bucket_name=self.bucket_name,
             object_name=file_name + ".jpg",
         )
 
     async def get_object(self, file_name: str) -> StreamingResponse:
 
-        response = self.minio_client.get_object(bucket_name=self.bucket_name,
-                                                object_name=file_name + ".jpg")
+        response = await self.minio_client.get_object(bucket_name=self.bucket_name,
+                                                      object_name=file_name + ".jpg")
         image_data = response.read()
         return image_data
