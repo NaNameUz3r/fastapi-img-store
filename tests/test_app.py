@@ -11,7 +11,7 @@ def client():
     return TestClient(app)
 
 
-@patch("app.routes.minio")
+@patch("app.routes.main.minio")
 def test_upload_file(mock_minio, client: TestClient) -> None:
     mock_minio.put_object.return_value = 'custom_image_id'
 
@@ -25,10 +25,10 @@ def test_upload_file(mock_minio, client: TestClient) -> None:
     assert "ID" in response_json
 
 
-# def test_upload_no_file(client: TestClient) -> None:
-#     response = client.post('/images/', files=None)
-#     assert response.status_code == 422
-#     assert response.json() == {"error": "No file provided"}
+def test_upload_no_file(client: TestClient) -> None:
+    response = client.post('/images/', files=None)
+    assert response.status_code == 400
+    assert response.json() == {"detail": "No file provided"}
 
 
 # def test_delete_file():
