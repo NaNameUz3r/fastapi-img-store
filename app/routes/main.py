@@ -3,7 +3,7 @@ import logging
 import typing as t
 
 from fastapi import APIRouter, UploadFile, File
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.exceptions import HTTPException
 from starlette import status
 
@@ -44,8 +44,8 @@ async def upload_file(file: t.Optional[UploadFile] = File(None)) -> JSONResponse
 @router.get("/images/{image_id}")
 async def download(image_id: str):
     try:
-        image_data = await minio.get_object(image_id)
-        return StreamingResponse(io.BytesIO(image_data), media_type="image/jpg")
+        redirect_url = await minio.get_object(image_id)
+        return RedirectResponse(url=redirect_url)
     except:
         return JSONResponse(status_code=404, content={"message": "Image not found"})
 
